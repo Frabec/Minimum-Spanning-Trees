@@ -5,39 +5,73 @@ import graph.EdgeComparator;
 import graph.*;
 
 public class SpanningTree {
-    
-    public static Collection<Edge> kruskal(UnionFind u, EuclideanGraph g){
-    List <Edge> mst = new LinkedList <Edge>();
-    List <Edge> edges= g.getAllEdges();
-    Collections.sort(edges, new EdgeComparator());
-    Place x;
-    Place y;
-    for (Edge e : edges){
-    	x=e.source;
-    	y=e.target;
-    	if (u.find(x)!=u.find(y)){
-    		mst.add(e);
-    		u.union(x, y);
-    	}
-    }
-    return mst;
-    	
-    }
-    
-    public static Collection<Collection<Edge>> kruskal(EuclideanGraph g){
-    	// Q3
-    	return null;
-    }
-    
-    public static Collection<Edge> primTree(HashSet<Place> nonVisited, Place start, EuclideanGraph g){
-    	// Q4
-    	return null;
-    }
-    
-    public static Collection<Collection<Edge>> primForest(EuclideanGraph g){
-    	// Q5
-    	return null;
-    }
-    
-   
+
+	public static Collection<Edge> kruskal(UnionFind u, EuclideanGraph g) {
+		List<Edge> mst = new LinkedList<Edge>();
+		List<Edge> edges = g.getAllEdges();
+		Collections.sort(edges, new EdgeComparator());
+		Place x;
+		Place y;
+		for (Edge e : edges) {
+			x = e.source;
+			y = e.target;
+			if (u.find(x) != u.find(y)) {
+				mst.add(e);
+				u.union(x, y);
+			}
+		}
+		return mst;
+
+	}
+
+	public static Collection<Collection<Edge>> kruskal(EuclideanGraph g) {
+		HashMap<Place, Collection<Edge>> dico = new HashMap<>();
+		UnionFind u = new UnionFind();
+		Collection<Edge> mst = kruskal(u, g);
+		Collection<Edge> list1;
+		for (Edge e : mst) {
+			list1 = dico.get(u.find(e.source));
+			if (list1 == null) {
+				list1 = new LinkedList<Edge>();
+			}
+			list1.add(e);
+			dico.put(u.find(e.source), list1);
+		}
+		
+		return (dico.values());
+	}
+
+	public static Collection<Edge> primTree(HashSet<Place> nonVisited, Place start, EuclideanGraph g) {
+		PriorityQueue<Edge> edges = new PriorityQueue<Edge>(new EdgeComparator());
+		Collection<Edge> mst = new LinkedList<Edge>();
+		Collection<Edge> exitingEdges = g.edgesOut(start);
+		Edge currentEdge;
+		for (Edge e : exitingEdges){
+			edges.add(e);
+		}
+		nonVisited.remove(start);
+		while (!edges.isEmpty()){
+			currentEdge=edges.poll();
+			if (!nonVisited.contains(currentEdge.target)){
+				continue;
+			}
+			
+			if (nonVisited.contains(currentEdge.target))
+			{
+				mst.add(currentEdge);
+				nonVisited.remove(currentEdge.target);
+				exitingEdges=g.edgesOut(currentEdge.target);
+				for (Edge e : exitingEdges){
+					edges.add(e);
+				}
+			}
+		}
+		return mst;
+	}
+
+	public static Collection<Collection<Edge>> primForest(EuclideanGraph  g) {
+		
+		return null;
+	}
+
 }
