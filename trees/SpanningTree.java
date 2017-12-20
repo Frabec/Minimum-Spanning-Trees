@@ -70,8 +70,27 @@ public class SpanningTree {
 	}
 
 	public static Collection<Collection<Edge>> primForest(EuclideanGraph  g) {
-		
-		return null;
+		Collection<Collection<Edge>> allMst = new LinkedList <Collection<Edge>> ();
+		HashSet<Place> nonVisited = new HashSet<Place>();
+		Set<Place> toPut = g.places();
+		Place start;
+		for (Place p : toPut){
+			nonVisited.add(p);
+		}
+		while (!nonVisited.isEmpty()){
+			start=nonVisited.iterator().next();
+			if(g.edgesOut(start).isEmpty()){
+				nonVisited.remove(start);
+				continue;
+			}
+			allMst.add(primTree(nonVisited, start, g));
+		}
+		for (Collection<Edge> c : allMst){
+			if (c.isEmpty()){
+				System.out.println("False !!!");
+			}
+		}
+		return allMst;
 	}
 
 }
